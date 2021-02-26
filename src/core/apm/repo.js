@@ -43,9 +43,18 @@ export async function getRepoLatestVersionForContract (repoProxy, appContractAdd
 
 export async function getRepoVersionById (repoProxy, versionId) {
   const { contentURI, contractAddress, semanticVersion } = await repoProxy.call('getByVersionId', versionId)
+
+  let contentURIDecoded;
+
+  try {
+    contentURIDecoded = hexToAscii(contentURI);
+  } catch (_err) {
+    contentURIDecoded = 'ipfs:UNKNOWN';
+  }
+
   return {
     contractAddress,
-    contentURI: hexToAscii(contentURI),
+    contentURI: contentURIDecoded,
     version: semanticVersion.join('.'),
     // Keeping this as a string makes comparisons a bit easier down the line
     versionId: versionId.toString()
